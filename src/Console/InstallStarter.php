@@ -1,6 +1,6 @@
 <?php
 
-namespace Mks1209\StarterInstaller\Console;
+namespace Mks1209tq\LaravelStarterInstaller\Console;
 
 use Illuminate\Console\Command;
 
