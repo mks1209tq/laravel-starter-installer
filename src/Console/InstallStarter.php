@@ -58,8 +58,19 @@ class InstallStarter extends Command
         file_put_contents(base_path('.gitignore'), "/draft.yaml\n", FILE_APPEND);
         file_put_contents(base_path('.gitignore'), "/.blueprint\n", FILE_APPEND);
 
-        $this->info('📦 Running Blueprint:new...');
-        $this->call('blueprint:new');
+        // ✅ Manually register provider
+        if (!app()->getProvider(\Laravel\Blueprint\BlueprintServiceProvider::class)) {
+            app()->register(\Laravel\Blueprint\BlueprintServiceProvider::class);
+        }
+
+        // ✅ Check if command exists
+        if (\Artisan::has('blueprint:new')) {
+            $this->info('📦 Running Blueprint:new...');
+            $this->call('blueprint:new');
+        } else {
+            $this->warn('⚠️ blueprint:new command not found. Skipping.');
+        }
+
 
 
         $this->info('📦 Installing Spatie Permission...');
