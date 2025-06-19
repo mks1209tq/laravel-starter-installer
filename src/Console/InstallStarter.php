@@ -15,6 +15,7 @@ class InstallStarter extends Command
         $this->info('📦 Installing Laravel Breeze...');
         $this->runProcess(['composer', 'require', 'laravel/breeze', '--dev']);
 
+
         $this->call('breeze:install');
 
         $this->info('📦 Running npm install and build...');
@@ -28,6 +29,9 @@ class InstallStarter extends Command
             '--provider' => "Spatie\Permission\PermissionServiceProvider",
             '--force' => true,
         ]);
+
+        $this->info('📦 Updating autoloader to register commands...');
+        $this->runProcess(['composer', 'dump-autoload']);
 
         $this->call('migrate');
 
