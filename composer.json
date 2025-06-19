@@ -1,0 +1,23 @@
+{
+    "name": "mks1209tq/laravel-starter-installer",
+    "description": "installer",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Mks1209tq\\LaravelStarterInstaller\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "mks"
+        }
+    ],
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mks1209tq\\LaravelStarterInstaller\\StarterInstallerServiceProvider"
+            ]
+        }
+    }
+}
