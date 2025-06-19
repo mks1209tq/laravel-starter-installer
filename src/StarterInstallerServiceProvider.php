@@ -3,6 +3,7 @@
 namespace Mks1209tq\LaravelStarterInstaller;
 
 use Illuminate\Support\ServiceProvider;
+use Mks1209tq\LaravelStarterInstaller\Console\InstallStarter;
 
 class StarterInstallerServiceProvider extends ServiceProvider
 {
@@ -10,13 +11,13 @@ class StarterInstallerServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Mks1209tq\LaravelStarterInstaller\Console\InstallStarter::class,
+                InstallStarter::class, // ← now fully qualified
             ]);
         }
     }
 
     public function register()
     {
-        // $this->mergeConfigFrom(__DIR__.'/config/starter-installer.php', 'starter-installer');
+        // You can merge configs here in future if needed
     }
 }
