@@ -8,12 +8,13 @@ use Symfony\Component\Process\Process;
 class InstallStarter extends Command
 {
     protected $signature = 'starter:install';
+
     protected $description = 'Automatically install Breeze and Spatie Permission into the Laravel project';
 
     public function handle()
     {
         $this->info('📦 Installing Laravel Breeze...');
-        $this->runProcess(['composer', 'require', 'laravel/breeze', '--dev']);
+        $this->runProcess(['composer', 'require', 'laravel/breeze']);
 
 
         $this->call('breeze:install');
@@ -21,6 +22,27 @@ class InstallStarter extends Command
         $this->info('📦 Running npm install and build...');
         $this->runProcess(['npm', 'install']);
         $this->runProcess(['npm', 'run', 'build']);
+
+
+        $this->info('📦 Installing Laravel Blueprint...');
+        $this->runProcess(['composer', 'require', '-W', '--dev', 'laravel-shift/blueprint']);
+
+        $this->info('📦 Publishing Laravel Blueprint...');
+        $this->call('vendor:publish', [
+            '--provider' => "Laravel\Blueprint\BlueprintServiceProvider",
+            '--force' => true,
+        ]);
+
+        $this->info('📦 Installing Laravel Test Assertions...');
+        $this->runProcess(['composer', 'require', '--dev', 'jasonmccreary/laravel-test-assertions']);
+
+        $this->info('📦 Adding .gitignore entries for Blueprint...');
+        file_put_contents(base_path('.gitignore'), "/draft.yaml\n", FILE_APPEND);
+        file_put_contents(base_path('.gitignore'), "/.blueprint\n", FILE_APPEND);
+
+
+        $this->info('📦 Running Blueprint:new...');
+        $this->call('blueprint:new');
 
         $this->info('📦 Installing Spatie Permission...');
         $this->runProcess(['composer', 'require', 'spatie/laravel-permission']);
@@ -30,8 +52,24 @@ class InstallStarter extends Command
             '--force' => true,
         ]);
 
+        $this->info('📦 Installing Laravel Sanctum...');
+        $this->runProcess(['composer', 'require', 'laravel/sanctum']);
+
+        $this->call('vendor:publish', [
+            '--provider' => "Laravel\Sanctum\SanctumServiceProvider",
+            '--force' => true,
+        ]);
+
+        $this->info('📦 Installing Laravel Flysystem S3...');
+        $this->runProcess(['composer', 'require', 'league/flysystem-aws-s3-v3', '--with-all-dependencies']);
+
+
+
+
+
         $this->info('📦 Updating autoloader to register commands...');
         $this->runProcess(['composer', 'dump-autoload']);
+
 
         $this->call('migrate');
 
