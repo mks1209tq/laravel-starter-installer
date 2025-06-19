@@ -47,29 +47,32 @@ class InstallStarter extends Command
 
         $this->info('📦 Publishing Laravel Blueprint...');
         $this->call('vendor:publish', [
-            '--provider' => "Laravel\\Blueprint\\BlueprintServiceProvider",
+            '--provider' => "Blueprint\\BlueprintServiceProvider",
             '--force' => true,
         ]);
 
+        // ✅ TEST ASSERTIONS GO HERE
         $this->info('📦 Installing Laravel Test Assertions...');
         $this->runProcess(['composer', 'require', '--dev', 'jasonmccreary/laravel-test-assertions']);
 
+        // Add gitignore entries
         $this->info('📦 Adding .gitignore entries for Blueprint...');
         file_put_contents(base_path('.gitignore'), "/draft.yaml\n", FILE_APPEND);
         file_put_contents(base_path('.gitignore'), "/.blueprint\n", FILE_APPEND);
 
-        // ✅ Manually register provider
-        if (!app()->getProvider(\Laravel\Blueprint\BlueprintServiceProvider::class)) {
-            app()->register(\Laravel\Blueprint\BlueprintServiceProvider::class);
+        // Register provider manually (for dev context)
+        if (!app()->getProvider(Blueprint\BlueprintServiceProvider::class)) {
+            app()->register(Blueprint\BlueprintServiceProvider::class);
         }
 
-        // ✅ Check if command exists
+        // Run Blueprint:new
         if (\Artisan::has('blueprint:new')) {
             $this->info('📦 Running Blueprint:new...');
             $this->call('blueprint:new');
         } else {
             $this->warn('⚠️ blueprint:new command not found. Skipping.');
         }
+
 
 
 
