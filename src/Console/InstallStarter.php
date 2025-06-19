@@ -17,7 +17,17 @@ class InstallStarter extends Command
         $this->runProcess(['composer', 'require', 'laravel/breeze']);
 
 
+        $this->info('📦 Dumping autoload after Breeze installation...');
+        $this->runProcess(['composer', 'dump-autoload']);
+
+        $this->info('📦 Refreshing Laravel commands...');
+        \Artisan::call('clear-compiled');
+        \Artisan::call('config:clear');
+        \Artisan::call('cache:clear');
+
+        $this->info('📦 Now installing Breeze scaffolding...');
         $this->call('breeze:install');
+
 
         $this->info('📦 Running npm install and build...');
         $this->runProcess(['npm', 'install']);
