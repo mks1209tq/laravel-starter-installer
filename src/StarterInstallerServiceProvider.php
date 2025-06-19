@@ -11,7 +11,7 @@ class StarterInstallerServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                InstallStarter::class, // ← now fully qualified
+                InstallStarter::class, 
             ]);
         }
     }
