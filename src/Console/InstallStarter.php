@@ -3,39 +3,49 @@
 namespace Mks1209tq\LaravelStarterInstaller\Console;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Process\Process;
 
 class InstallStarter extends Command
 {
     protected $signature = 'starter:install';
-    protected $description = 'Scaffold Breeze and Spatie Permission (after packages are installed)';
+    protected $description = 'Automatically install Breeze and Spatie Permission into the Laravel project';
 
     public function handle()
     {
-        if (!class_exists(\Laravel\Breeze\BreezeServiceProvider::class)) {
-            $this->error('Laravel Breeze is not installed. Please run: composer require laravel/breeze --dev');
-            return;
-        }
+        $this->info('📦 Installing Laravel Breeze...');
+        $this->runProcess(['composer', 'require', 'laravel/breeze', '--dev']);
 
-        if (!class_exists(\Spatie\Permission\PermissionServiceProvider::class)) {
-            $this->error('Spatie Permission is not installed. Please run: composer require spatie/laravel-permission');
-            return;
-        }
-
-        $this->info('Running Laravel Breeze scaffolding...');
         $this->call('breeze:install');
 
-        $this->info('Running npm install and build...');
-        exec('npm install && npm run build');
+        $this->info('📦 Running npm install and build...');
+        $this->runProcess(['npm', 'install']);
+        $this->runProcess(['npm', 'run', 'build']);
 
-        $this->info('Publishing Spatie Permission config...');
+        $this->info('📦 Installing Spatie Permission...');
+        $this->runProcess(['composer', 'require', 'spatie/laravel-permission']);
+
         $this->call('vendor:publish', [
             '--provider' => "Spatie\Permission\PermissionServiceProvider",
             '--force' => true,
         ]);
 
-        $this->info('Running migrations...');
         $this->call('migrate');
 
-        $this->info('✅ Starter packages configured successfully.');
+        $this->info('✅ Starter packages installed successfully.');
+    }
+
+    protected function runProcess(array $command)
+    {
+        $process = new Process($command);
+        $process->setTimeout(null); // disable timeout for large installs
+
+        $process->run(function ($type, $buffer) {
+            echo $buffer;
+        });
+
+        if (!$process->isSuccessful()) {
+            $this->error('❌ Command failed: ' . implode(' ', $command));
+            exit(1);
+        }
     }
 }
