@@ -9,6 +9,11 @@ class StarterInstallerServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
+        if($this->app->runningInConsole()){
+            $this->commands([
+                Mks1209\StarterInstaller\Console\InstallStarter::class,
+            ]);
+        }
     }
 
     public function register()
