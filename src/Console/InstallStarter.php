@@ -37,9 +37,17 @@ class InstallStarter extends Command
         $this->info('📦 Installing Laravel Blueprint...');
         $this->runProcess(['composer', 'require', '-W', '--dev', 'laravel-shift/blueprint']);
 
+        $this->info('📦 Dumping autoload for Blueprint...');
+        $this->runProcess(['composer', 'dump-autoload']);
+
+        $this->info('📦 Refreshing Laravel commands...');
+        \Artisan::call('clear-compiled');
+        \Artisan::call('config:clear');
+        \Artisan::call('cache:clear');
+
         $this->info('📦 Publishing Laravel Blueprint...');
         $this->call('vendor:publish', [
-            '--provider' => "Laravel\Blueprint\BlueprintServiceProvider",
+            '--provider' => "Laravel\\Blueprint\\BlueprintServiceProvider",
             '--force' => true,
         ]);
 
@@ -50,9 +58,9 @@ class InstallStarter extends Command
         file_put_contents(base_path('.gitignore'), "/draft.yaml\n", FILE_APPEND);
         file_put_contents(base_path('.gitignore'), "/.blueprint\n", FILE_APPEND);
 
-
         $this->info('📦 Running Blueprint:new...');
         $this->call('blueprint:new');
+
 
         $this->info('📦 Installing Spatie Permission...');
         $this->runProcess(['composer', 'require', 'spatie/laravel-permission']);
